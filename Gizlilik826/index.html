@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YaşamUsta - Gerçek Yaşam Simülatörü RPG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel='icon' href='/src/icons/logo.png' type='image/x-icon'>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#34393e',
+                        marine: '#47646a',
+                        lime: '#c0c56b',
+                        white: '#ffffff'
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-10px)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2347646a' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .gradient-overlay {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(52, 57, 62, 0.9));
+        }
+
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #c0c56b;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-dark">
+    <!-- Header with Navigation -->
+    <header class="fixed w-full bg-white bg-opacity-95 shadow-md z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
+            <!-- Logo and Site Name -->
+            <div class="flex items-center mb-4 sm:mb-0">
+                <a href="/" class="flex items-center">
+                    <div class="w-12 h-12 rounded-full bg-lime flex items-center justify-center mr-3 overflow-hidden animate-float">
+                        <i class="fas fa-gamepad text-dark text-2xl"></i>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-light text-dark">
+                        <span class="font-bold text-marine">Yaşam</span><span class="text-lime">Usta</span>
+                    </h1>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex flex-wrap justify-center sm:justify-end gap-6 sm:gap-8">
+                <a href="/#anasayfa" class="nav-link text-lg font-light text-dark hover:text-lime transition-colors duration-300">Ana Sayfa</a>
+                <a href="/#oyun-hakkinda" class="nav-link text-lg font-light text-dark hover:text-lime transition-colors duration-300">Oyun Hakkında</a>
+                <a href="/#ozellikler" class="nav-link text-lg font-light text-dark hover:text-lime transition-colors duration-300">Özellikler</a>
+                <a href="/#kariyerler" class="nav-link text-lg font-light text-dark hover:text-lime transition-colors duration-300">Kariyerler</a>
+                <a href="/#indir" class="nav-link text-lg font-light text-marine hover:text-lime transition-colors duration-300">
+                    <i class="fas fa-download mr-1"></i> İndir
+                </a>
+            </nav>
+        </div>
+    </header>
+    <!-- Privacy Policy Hero Section -->
+    <section class="pt-32 pb-16 bg-gradient-to-b from-dark to-dark/90 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <span class="inline-block px-6 py-2 bg-lime/20 text-lime rounded-full text-sm uppercase tracking-wider mb-4">Gizlilik Politikası</span>
+                <h1 class="text-4xl sm:text-5xl font-light mb-6">YaşamUsta <span class="text-lime font-normal">Gizlilik Politikası</span></h1>
+                <p class="text-xl font-light text-white/70 mb-8">
+                    Kullanıcılarımızın gizliliği ve veri güvenliği bizim için en önemli önceliklerden biridir.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+                <div class="prose prose-lg max-w-none">
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-light text-dark mb-6">Giriş <span class="text-marine font-normal">ve Genel Bakış</span></h2>
+                        <p class="text-dark/80 font-light mb-6">
+                            YaşamUsta olarak, <a href="https://bonanza-topgame.com/" class="text-marine hover:text-lime transition-colors duration-300">https://bonanza-topgame.com/</a> adresinden erişilebilen web sitemizi ziyaret eden kullanıcıların gizliliği en önemli önceliklerimizden biridir. Bu Gizlilik Politikası belgesi, YaşamUsta tarafından toplanan ve kaydedilen bilgilerin türlerini ve bunların nasıl kullanıldığını içermektedir.
+                        </p>
+                        <p class="text-dark/80 font-light mb-6">
+                            Eğer ek sorularınız varsa veya Gizlilik Politikamız hakkında daha fazla bilgiye ihtiyacınız olursa, bizimle iletişime geçmekten çekinmeyin.
+                        </p>
+                    </div>
+
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-light text-dark mb-6">Günlük <span class="text-marine font-normal">Dosyaları</span></h2>
+                        <p class="text-dark/80 font-light mb-6">
+                            YaşamUsta, günlük dosyalarını kullanma konusunda standart bir prosedürü takip etmektedir. Bu dosyalar, ziyaretçiler web sitelerini ziyaret ettiğinde otomatik olarak kaydedilir. Tüm barındırma şirketleri bunu yapar ve bu, barındırma hizmetleri analizlerinin bir parçasıdır. Günlük dosyaları tarafından toplanan bilgiler şunları içerebilir:
+                        </p>
+
+                        <ul class="list-disc pl-6 mb-6 space-y-2 text-dark/80 font-light">
+                            <li>İnternet Protokolü (IP) adresleri,</li>
+                            <li>Tarayıcı türü,</li>
+                            <li>İnternet Servis Sağlayıcısı (ISP),</li>
+                            <li>Ziyaret tarihi ve saati,</li>
+                            <li>Yönlendiren/çıkış sayfaları,</li>
+                            <li>Tıklama sayısı.</li>
+                        </ul>
+
+                        <p class="text-dark/80 font-light mb-6">
+                            Bu bilgiler, herhangi bir kişisel olarak tanımlanabilir bilgi ile ilişkilendirilmez. Veriler, trendleri analiz etmek, siteyi yönetmek, kullanıcıların web sitesi üzerindeki hareketlerini takip etmek ve demografik bilgiler toplamak için kullanılır.
+                        </p>
+                    </div>
+
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-light text-dark mb-6">Çerezler ve <span class="text-marine font-normal">Web İşaretçileri</span></h2>
+                        <p class="text-dark/80 font-light mb-6">
+                            Diğer birçok web sitesi gibi, YaşamUsta da "çerezler" kullanmaktadır. Bu çerezler, ziyaretçilerin tercihleri ve ziyaret ettikleri sayfalar gibi bilgileri saklamak için kullanılır. Toplanan veriler, kullanıcı deneyimini iyileştirmek amacıyla web sitesi içeriğini ziyaretçilerin tarayıcı türüne ve diğer bilgilerine göre özelleştirmek için kullanılır.
+                        </p>
+
+                        <p class="text-dark/80 font-light mb-6">
+                            Çerezler hakkında daha fazla genel bilgi için Privacy Policy Generator'ın "Çerezler" makalesine göz atabilirsiniz.
+                        </p>
+
+                        <div class="bg-marine/10 rounded-lg p-6 mb-6">
+                            <h3 class="text-xl font-light text-dark mb-3">Google DoubleClick DART Çerezi</h3>
+                            <p class="text-dark/80 font-light">
+                                Google, sitemizdeki üçüncü taraf sağlayıcılardan biridir. Ayrıca, DART çerezlerini kullanarak, ziyaretçilerin www.website.com ve diğer sitelerde gerçekleştirdiği ziyaretlere dayalı olarak reklamlar sunabilir. Ancak, ziyaretçiler, Google reklam ve içerik ağı Gizlilik Politikası'na göz atarak DART çerezlerinin kullanımını devre dışı bırakabilirler: <a href="https://policies.google.com/technologies/ads" class="text-marine hover:text-lime transition-colors duration-300">https://policies.google.com/technologies/ads</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Advertising Partners Section -->
+    <section class="py-16 bg-gradient-to-b from-white to-lime/10 bg-pattern">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-12 text-center">
+                    <span class="inline-block px-6 py-2 bg-marine/10 text-marine rounded-full text-sm uppercase tracking-wider mb-4">Reklam Ortaklarımız</span>
+                    <h2 class="text-3xl sm:text-4xl font-light text-dark mb-6">Reklam <span class="text-marine font-normal">Ortaklarımız</span></h2>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+                    <p class="text-dark/80 font-light mb-6">
+                        Web sitemizdeki bazı reklamverenler çerezler ve web işaretçileri kullanabilir. Reklam ortaklarımız aşağıda listelenmiştir. Her reklam ortağının kullanıcı verilerini nasıl ele aldığına dair kendi Gizlilik Politikası bulunmaktadır. Kolay erişim sağlamak adına, gizlilik politikalarına bağlantılar ekledik:
+                    </p>
+
+                    <div class="flex items-center justify-between p-4 bg-marine/5 rounded-lg mb-4 hover:bg-marine/10 transition-colors duration-300">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-marine/20 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fab fa-google text-marine text-2xl"></i>
+                            </div>
+                            <span class="text-lg font-light text-dark">Google</span>
+                        </div>
+                        <a href="https://policies.google.com/technologies/ads" target="_blank" class="text-marine hover:text-lime transition-colors duration-300">
+                            Gizlilik Politikası <i class="fas fa-external-link-alt ml-2 text-sm"></i>
+                        </a>
+                    </div>
+
+                    <p class="text-dark/80 font-light">
+                        YaşamUsta'nın reklam ortaklarının her biri için ilgili Gizlilik Politikası'na başvurabilirsiniz.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h3 class="text-2xl font-light text-dark mb-4">Üçüncü Taraf <span class="text-marine font-normal">Teknolojileri</span></h3>
+                    <p class="text-dark/80 font-light mb-6">
+                        Üçüncü taraf reklam sunucuları veya reklam ağları, doğrudan kullanıcıların tarayıcılarına gönderilen çerezler, JavaScript veya Web İşaretçileri gibi teknolojiler kullanabilir. Bu teknolojiler, reklam kampanyalarının etkinliğini ölçmek ve ziyaret ettiğiniz web sitelerinde size gösterilen reklam içeriğini kişiselleştirmek için kullanılır.
+                    </p>
+                    <p class="text-dark/80 font-light mb-6">
+                        YaşamUsta, üçüncü taraf reklamverenler tarafından kullanılan bu çerezlere erişemez veya bunları kontrol edemez.
+                    </p>
+
+                    <div class="flex p-6 bg-dark/5 rounded-lg items-start mb-6">
+                        <div class="w-12 h-12 bg-lime rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                            <i class="fas fa-info text-dark text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-light text-dark mb-2">Üçüncü Taraf Gizlilik Politikaları</h4>
+                            <p class="text-dark/80 font-light">
+                                YaşamUsta'nın Gizlilik Politikası, diğer reklamverenler veya web siteleri için geçerli değildir. Bu nedenle, daha ayrıntılı bilgiler için ilgili üçüncü taraf reklam sunucularının gizlilik politikalarına başvurmanızı öneririz. Bu politikalar, belirli seçeneklerden nasıl çıkabileceğiniz hakkında bilgi içerebilir.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-dark/80 font-light">
+                        Çerezleri devre dışı bırakmak için tarayıcı seçeneklerinizi kullanabilirsiniz. Belirli web tarayıcılarında çerez yönetimi hakkında daha fazla bilgi edinmek için ilgili tarayıcıların resmi web sitelerini ziyaret edebilirsiniz.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Children Information Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-marine/10 rounded-xl p-8 mb-12">
+                    <div class="flex items-start">
+                        <div class="w-16 h-16 rounded-full bg-lime flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fas fa-child text-dark text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-light text-dark mb-4">Çocukların <span class="text-marine font-normal">Bilgileri</span></h2>
+                            <p class="text-dark/80 font-light mb-4">
+                                İnterneti kullanırken çocukların korunması, önceliklerimizden bir diğeridir. Ebeveynleri ve velileri, çocuklarının internet aktivitelerini gözlemlemeye, katılmaya ve yönlendirmeye teşvik ediyoruz.
+                            </p>
+                            <p class="text-dark/80 font-light">
+                                YaşamUsta, 13 yaşın altındaki çocuklardan bilerek herhangi bir kişisel bilgi toplamaz. Eğer çocuğunuzun bu tür bilgileri web sitemizde paylaştığını düşünüyorsanız, lütfen hemen bizimle iletişime geçin. Böyle bir bilgiyi en kısa sürede kayıtlarımızdan kaldırmak için elimizden geleni yapacağız.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white rounded-xl shadow-lg p-8 h-full">
+                        <div class="w-12 h-12 rounded-lg bg-lime/20 flex items-center justify-center mb-6">
+                            <i class="fas fa-globe text-marine text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-light text-dark mb-4">Çevrimiçi Gizlilik Politikası <span class="text-marine font-normal">Yalnızca</span></h3>
+                        <p class="text-dark/80 font-light">
+                            Bu Gizlilik Politikası yalnızca çevrimiçi faaliyetlerimiz için geçerlidir ve YaşamUsta web sitesini ziyaret edenler tarafından paylaşılan ve/veya toplanan bilgilere ilişkindir. Bu politika, çevrimdışı olarak veya bu web sitesi dışındaki kanallar aracılığıyla toplanan herhangi bir bilgi için geçerli değildir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-8 h-full">
+                        <div class="w-12 h-12 rounded-lg bg-lime/20 flex items-center justify-center mb-6">
+                            <i class="fas fa-handshake text-marine text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-light text-dark mb-4"><span class="text-marine font-normal">Onay</span></h3>
+                        <p class="text-dark/80 font-light">
+                            Web sitemizi kullanarak, Gizlilik Politikamızı kabul etmiş ve şartlarını kabul etmiş sayılırsınız.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="/" class="inline-flex items-center justify-center px-8 py-4 bg-marine text-white text-xl font-light rounded-lg hover:bg-lime hover:text-dark transition-all duration-300 shadow-lg transform hover:-translate-y-1">
+                        <i class="fas fa-home mr-3"></i>
+                        Ana Sayfaya Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section for Privacy Related Questions -->
+    <section class="py-16 bg-gradient-to-b from-white to-lime/10 bg-pattern">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-6 py-2 bg-marine/10 text-marine rounded-full text-sm uppercase tracking-wider mb-4">Sıkça Sorulan Sorular</span>
+                    <h2 class="text-3xl sm:text-4xl font-light text-dark mb-6">Gizlilik <span class="text-marine font-normal">Hakkında SSS</span></h2>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- FAQ Item 1 -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="flex items-center justify-between p-6 cursor-pointer">
+                            <h3 class="text-xl font-light text-dark">Verilerimi nasıl silebilirim?</h3>
+                            <i class="fas fa-chevron-down text-marine"></i>
+                        </div>
+                        <div class="px-6 pb-6">
+                            <p class="text-dark/70 font-light">
+                                Hesabınızdaki tüm verileri silmek için, hesap ayarları bölümünden 'Hesabımı Sil' seçeneğini kullanabilir veya doğrudan destek ekibimizle iletişime geçebilirsiniz.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="flex items-center justify-between p-6 cursor-pointer">
+                            <h3 class="text-xl font-light text-dark">Çerezleri nasıl devre dışı bırakabilirim?</h3>
+                            <i class="fas fa-chevron-down text-marine"></i>
+                        </div>
+                        <div class="px-6 pb-6">
+                            <p class="text-dark/70 font-light">
+                                Çerezleri tarayıcı ayarlarınızdan devre dışı bırakabilirsiniz. Her tarayıcı için bu işlem farklılık gösterebilir. Tarayıcınızın yardım bölümünde ayrıntılı bilgi bulabilirsiniz.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="flex items-center justify-between p-6 cursor-pointer">
+                            <h3 class="text-xl font-light text-dark">Hangi bilgilerim toplanıyor?</h3>
+                            <i class="fas fa-chevron-down text-marine"></i>
+                        </div>
+                        <div class="px-6 pb-6">
+                            <p class="text-dark/70 font-light">
+                                IP adresiniz, tarayıcı bilgileriniz, ziyaret saatleri gibi temel bilgiler toplamaktayız. Bunun dışında, hizmetlerimizi kullanırken sağladığınız bilgiler de kaydedilmektedir. Detaylı bilgi için gizlilik politikamızın ilgili bölümlerine bakabilirsiniz.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section for Privacy Questions -->
+    <section class="py-16 bg-dark text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl sm:text-4xl font-light mb-6">Gizlilik ile İlgili <span class="text-lime font-normal">Sorularınız mı Var?</span></h2>
+                <p class="text-xl font-light text-white/70 mb-10">
+                    Gizlilik politikamız veya verilerinizin işlenmesi hakkında daha fazla bilgi için bizimle iletişime geçebilirsiniz.
+                </p>
+
+                <a href="mailto:service@bonanza-topgame.com" class="inline-flex items-center justify-center px-10 py-5 bg-lime text-dark text-xl font-medium rounded-lg hover:bg-white transition-all duration-300 shadow-xl transform hover:-translate-y-1">
+                    <i class="fas fa-envelope mr-3"></i>
+                    <span>Bize Ulaşın</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <!-- Footer Column 1 -->
+                <div>
+                    <a href="/" class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-lime flex items-center justify-center mr-2 overflow-hidden">
+                            <i class="fas fa-gamepad text-dark text-lg"></i>
+                        </div>
+                        <h1 class="text-xl font-light">
+                            <span class="font-bold text-marine">Yaşam</span><span class="text-lime">Usta</span>
+                        </h1>
+                    </a>
+
+                    <p class="text-white/60 font-light mb-6">
+                        Gerçek yaşam simülatörü mobil oyunu ile kendi hayatınızı istediğiniz gibi şekillendirin.
+                    </p>
+
+                    <div class="flex space-x-3">
+                        <a href="https://www.facebook.com/capplaygames/" target="_blank" class="w-10 h-10 rounded-full bg-marine/20 flex items-center justify-center hover:bg-lime hover:text-dark transition-colors duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/CapPlayGames" target="_blank" class="w-10 h-10 rounded-full bg-marine/20 flex items-center justify-center hover:bg-lime hover:text-dark transition-colors duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.instagram.com/capplaygames/" target="_blank" class="w-10 h-10 rounded-full bg-marine/20 flex items-center justify-center hover:bg-lime hover:text-dark transition-colors duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UC8yIj0AL1SJcqqZzq27bBPA?view_as=subscriber" target="_blank" class="w-10 h-10 rounded-full bg-marine/20 flex items-center justify-center hover:bg-lime hover:text-dark transition-colors duration-300">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Footer Column 2 -->
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">Hızlı Bağlantılar</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="/#anasayfa" class="text-white/60 hover:text-lime transition-colors duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i>
+                                <span>Ana Sayfa</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#oyun-hakkinda" class="text-white/60 hover:text-lime transition-colors duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i>
+                                <span>Oyun Hakkında</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#ozellikler" class="text-white/60 hover:text-lime transition-colors duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i>
+                                <span>Özellikler</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#kariyerler" class="text-white/60 hover:text-lime transition-colors duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i>
+                                <span>Kariyerler</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#indir" class="text-white/60 hover:text-lime transition-colors duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i>
+                                <span>İndir</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 3 -->
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">İletişim</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-lime mt-1 mr-3"></i>
+                            <span class="text-white/60">service@bonanza-topgame.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-headset text-lime mt-1 mr-3"></i>
+                            <span class="text-white/60">Destek Merkezi</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fab fa-discord text-lime mt-1 mr-3"></i>
+                            <span class="text-white/60">Discord Topluluğu</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 4 -->
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">Mobil Uygulamayı İndir</h3>
+                    <div class="flex flex-col space-y-3">
+                        <a href="https://play.google.com/store/apps/details?id=com.capplay.reallifesimulator&pcampaignid=web_share" target="_blank" class="inline-flex items-center bg-white/10 hover:bg-lime hover:text-dark px-4 py-2 rounded-lg transition-colors duration-300">
+                            <i class="fab fa-google-play text-2xl mr-3"></i>
+                            <div>
+                                <span class="block text-xs">Google Play'den</span>
+                                <span class="block text-sm font-medium">İNDİR</span>
+                            </div>
+                        </a>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-white/10 mb-8">
+
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-white/60 font-light text-sm mb-4 md:mb-0">
+                    &copy; 2025 YaşamUsta. Tüm hakları saklıdır.
+                </div>
+
+                <div class="flex flex-wrap justify-center space-x-4">
+                    <a href="/Gizlilik826/" class="text-white/60 hover:text-lime text-sm transition-colors duration-300">Gizlilik Politikası</a>
+                    <a href="/Kullanım346/" class="text-white/60 hover:text-lime text-sm transition-colors duration-300">Kullanım Koşulları</a>
+                    <a href="/cerez23/" class="text-white/60 hover:text-lime text-sm transition-colors duration-300">Çerezler</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <div class="fixed bottom-8 right-8 z-50">
+        <a href="/#anasayfa" class="w-12 h-12 bg-lime rounded-full flex items-center justify-center shadow-lg hover:bg-marine hover:text-white transition-all duration-300 text-dark">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+
+
+
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('shadow-lg');
+                header.classList.remove('shadow-md');
+            } else {
+                header.classList.remove('shadow-lg');
+                header.classList.add('shadow-md');
+            }
+        });
+    </script>
+</body>
+
+</html>
+
+
+<?php
+$cookieConsentHtml = '
+<style>
+.cookie-consent {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    background: #34393e; 
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border-top: 3px solid #c0c56b; 
+}
+
+.cookie-container {
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cookie-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.cookie-title {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-right: 1.5rem;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.cookie-title i {
+    color: #c0c56b; 
+    font-size: 1.25rem;
+}
+
+.cookie-text {
+    color: #ffffff;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+    font-weight: 300; 
+}
+
+.cookie-link {
+    color: #c0c56b; 
+    text-decoration: none;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.cookie-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #c0c56b;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.cookie-link:hover::after {
+    transform: scaleX(1);
+}
+
+.cookie-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.cookie-button-reject,
+.cookie-button-accept {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px; 
+}
+
+.cookie-button-reject {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid #47646a; 
+}
+
+.cookie-button-reject:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: #ffffff;
+}
+
+.cookie-button-accept {
+    background: #47646a; 
+    color: #ffffff;
+    border: 2px solid #47646a;
+}
+
+.cookie-button-accept:hover {
+    background: #c0c56b; 
+    color: #34393e; 
+    border-color: #c0c56b;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 992px) {
+    .cookie-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .cookie-content {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    .cookie-title {
+        margin-bottom: 0.5rem;
+    }
+
+    .cookie-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .cookie-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .cookie-button-reject,
+    .cookie-button-accept {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+<div id="cookieConsent" class="cookie-consent">
+    <div class="cookie-container">
+        <div class="cookie-content">
+            <h3 class="cookie-title">
+                <i class="fas fa-cookie-bite"></i>
+                Çerez Politikası
+            </h3>
+            <p class="cookie-text">
+                YaşamUsta oyun deneyiminizi geliştirmek için çerezler kullanıyoruz. Web sitemizi kullanmaya devam ederek çerezlerin kullanımını kabul etmiş olursunuz. Daha fazla bilgi için
+                <a href="/Gizlilik826/" class="cookie-link">Gizlilik Politikamızı</a>,
+                <a href="/Kullanım346/" class="cookie-link">Hizmet Şartlarımızı</a>
+                ve
+                <a href="/cerez23/" class="cookie-link">Çerez Politikamızı</a>
+                okuyabilirsiniz.
+            </p>
+        </div>
+        
+        <div class="cookie-buttons">
+            <button id="rejectCookies" class="cookie-button-reject">
+                Reddet
+            </button>
+            <button id="acceptCookies" class="cookie-button-accept">
+                Kabul Et
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+   const cookieConsent = document.getElementById("cookieConsent");
+   const acceptBtn = document.getElementById("acceptCookies");
+   const rejectBtn = document.getElementById("rejectCookies");
+   
+   if (!getCookie("aprenderd_cookie_consent")) {
+       setTimeout(() => {
+           cookieConsent.style.transform = "translateX(0)";
+       }, 1000);
+   }
+
+   function getCookie(name) {
+       let matches = document.cookie.match(new RegExp(
+           "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"
+       ));
+       return matches ? decodeURIComponent(matches[1]) : undefined;
+   }
+   
+   function setCookie(name, value, days) {
+       const date = new Date();
+       date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+       const expires = "; expires=" + date.toUTCString();
+       document.cookie = name + "=" + value + expires + "; path=/; SameSite=Strict; Secure";
+   }
+
+   function handleConsent(consent) {
+       setCookie("aprenderd_cookie_consent", consent, 365);
+       cookieConsent.style.transform = "translateX(120%)";
+       
+       setTimeout(() => {
+           cookieConsent.remove();
+       }, 500);
+   }
+
+   acceptBtn.addEventListener("click", () => handleConsent("accepted"));
+   rejectBtn.addEventListener("click", () => handleConsent("rejected"));
+});
+</script>
+';
+
+if (!isset($_COOKIE["aprenderd_cookie_consent"])) {
+    echo $cookieConsentHtml;
+}
+?>
